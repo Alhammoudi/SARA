@@ -117,42 +117,40 @@ def rename_dir(olddir, newdir):
     print(text + f'{g}done{w}')
     return newdir
 # upload file to transfer.sh (primary url) or file.io (second url)
+# Replace the existing upload_file function with this modified version
+
 def upload_file(file):
     prints(f'''
-{sara} : do you want to upload \'{g}{file}{w}\' ?
-         
-         (1) yes, I want to upload
+{sara} : do you want to download \'{g}{file}{w}\' to your desktop?
+
+         (1) yes, I want to download
          (2) no thanks
     ''')
     asks = str(input(f'{user} : '))
     if asks in ('2', '02'):
         return False
 
-    # Change the following variables to match your web server configuration
-    upload_url = "http://127.0.0.1:5000/"  # Replace with your server URL
-    file_field_name = "file"  # Replace with the field name used for file uploads in your form
+    # Modify the following line to match your desktop path
+    desktop_path = os.path.expanduser("~/Desktop")
 
-    files = {file_field_name: (os.path.basename(file), open(file, "rb"))}
+    destination_file = os.path.join(desktop_path, os.path.basename(file))
 
-    text = f'{sara} : uploading \'{d}{file}{w}\' to your server ... '
+    text = f'{sara} : downloading \'{d}{file}{w}\' to your desktop ... '
     print(text + f'{y}wait{w}', end='\r')
 
     try:
-        response = requests.post(upload_url, files=files)
-        if response.status_code == 200:
-            download_link = response.text.strip()
-            print(text + f'{g}done{w}')
-            prints(f'''
-{sara} : your file has been successfully uploaded,
-         here is the download link ...
+        # Copy the file to the desktop
+        shutil.copy(file, destination_file)
+        print(text + f'{g}done{w}')
+        prints(f'''
+{sara} : your file has been successfully downloaded to the desktop.
          
-         {y}{download_link}{w}''')
-        else:
-            print(text + f'{r}fail{w}')
+         {y}{destination_file}{w}''')
     except Exception as e:
         print(text + f'{r}fail{w} - {e}')
 
     return True
+
 # generate raw trojan using msfvenom (metasploit)
 def generate_trojan(host, port, name = None):
     if name == None: name = 'trojan'
