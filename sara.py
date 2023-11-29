@@ -128,7 +128,7 @@ def upload_file(file):
     if asks in ('2', '02'): return False
     text = f'{sara} : upload \'{d}{file}{w}\' into the link ...'
     print(text + f'{y}wait{w}', end='\r')
-    link = os.popen(f'curl --upload-file {file} https://transfer.sh/{os.path.basename(file)} --silent', 'r').readline().strip()
+    link = os.popen(f'curl --upload-file {file} http://127.0.0.1:5000/{os.path.basename(file)} --silent', 'r').readline().strip()
     if 'https' not in link:
         try:
             link = re.search('"link":"(.*?)"', os.popen(f'curl -F "file=@{file}" https://file.io --silent','r').read()).group(1)
