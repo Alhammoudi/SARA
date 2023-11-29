@@ -129,7 +129,7 @@ def upload_file(file):
         return False
 
     # Change the following variables to match your web server configuration
-    upload_url = "http://your-server/upload.php"  # Replace with your server URL
+    upload_url = "http://127.0.0.1:5000/"  # Replace with your server URL
     file_field_name = "file"  # Replace with the field name used for file uploads in your form
 
     files = {file_field_name: (os.path.basename(file), open(file, "rb"))}
