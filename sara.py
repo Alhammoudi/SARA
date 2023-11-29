@@ -24,6 +24,7 @@ try:
     import datetime
     import requests
     import fileinput
+    import shutil
     from PIL import Image
 except (ModuleNotFoundError):
     exit(f'''
